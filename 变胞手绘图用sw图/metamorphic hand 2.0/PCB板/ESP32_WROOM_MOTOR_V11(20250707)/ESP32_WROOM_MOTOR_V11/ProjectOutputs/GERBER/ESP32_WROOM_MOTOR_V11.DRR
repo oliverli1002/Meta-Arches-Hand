@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: ESP32_WROOM_MOTOR_V11.PcbDoc   2025/7/7  13:25:48
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : ESP32_WROOM_MOTOR_V11-RoundHoles.TXT
+ASCII SlotHoles File : ESP32_WROOM_MOTOR_V11-SlotHoles.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        9.84mil (0.24994mm)      Round          515              34.81 Inch (884.16 mm)
+T2        27.56mil (0.70002mm)     Slot           4                1.51 Inch (38.25 mm)
+T3        39.37mil (1mm)           Round          4                0.30 Inch (7.62 mm)
+T4        62.99mil (1.59995mm)     Round          6                0.95 Inch (24.02 mm)
+T5        23.62mil (0.59995mm)     Round          2         NPTH   0.23 Inch (5.78 mm)
+---------------------------------------------------------------------------
+Totals                                            531              37.79 Inch (959.83 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:01
