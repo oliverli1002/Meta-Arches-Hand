@@ -22,6 +22,7 @@ theta_r1 = linspace(0,84*pi/180,30);
 theta_l1 = linspace(0,84*pi/180,30);
 %计算五指的关节变量
 jvar_t = calculate_thumb_variables(theta_t1,theta_t2);
+jvar_t_bd = calculate_thumb_variables_bending(theta_t2);
 jvar_i = calculate_modularized_finger_variables(theta_i1);
 jvar_m = calculate_modularized_finger_variables(theta_m1);
 jvar_r = calculate_modularized_finger_variables(theta_r1);
