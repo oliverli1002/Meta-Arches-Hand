@@ -12,9 +12,10 @@ k = 2;
 alpha = [pi/4,pi/9,7*pi/36,4*pi/9,5*pi/9,4*pi/9];
 t1 = 16;
 t2 = 11;
+%在小论文的指根基关节定义中，其处于冠状面，t1与t2没有用到。
 
 %生成五指的驱动关节变量。原采样数量均为100。
-theta_t1 = linspace(-10*pi/180,-133.5*pi/180,30);
+theta_t1 = linspace(-25*pi/180,-133.5*pi/180,30);
 theta_t2 = linspace(9.44*pi/180,82.27*pi/180,30);
 theta_i1 = linspace(0,84*pi/180,30);
 theta_m1 = linspace(0,84*pi/180,30);
@@ -32,8 +33,8 @@ jvar_f = {jvar_t;jvar_i;jvar_m;jvar_r;jvar_l};
 %{
 五指的设计参数。
 L的5列对应五指，L第一行为五指基坐标系到全局坐标系的距离，
-第二行为手指及坐标系原点至mcp关节旋量距离，第三四五行分别为指节长度。
-gamma的5列对应五指，gamma第一行为手掌全局坐标到五指指根坐标向量的圆心角，
+第二行为手指基坐标系原点至mcp关节旋量距离(注意，在论文中手指坐标系定义在mcp关节)，
+第三四五行分别为指节长度。gamma的5列对应五指，gamma第一行为手掌全局坐标到五指指根坐标向量的圆心角，
 第二行为五指基坐标系y0轴朝向与竖直方向的偏角，
 三四五行分别为五指在初始状态下三指节的关节角。
 %}
@@ -45,12 +46,14 @@ l_r = [74.17;  9.55;   45 ;   38; 27.29];
 l_l = [82.15;  9.41;   35 ; 29.5; 21.46];
 L = [l_t, l_i, l_m, l_r, l_l];
 
-gamma_t = [99.04*pi/180;  28*pi/180; jvar_t(2,1); jvar_t(3,1);      0     ];
+%q手处于初始构型下，各设计角度和各手指关节角度。q_ini记录关节角度。
+gamma_t = [99.04*pi/180;  28*pi/180;           0; jvar_t(3,1); jvar_t(4,1)];
 gamma_i = [35.02*pi/180;  10*pi/180; jvar_i(2,1); jvar_i(3,1); jvar_i(4,1)];
 gamma_m = [ 12.2*pi/180;   0*pi/180; jvar_m(2,1); jvar_m(3,1); jvar_m(4,1)];
 gamma_r = [16.71*pi/180;   8*pi/180; jvar_r(2,1); jvar_r(3,1); jvar_r(4,1)];
 gamma_l = [39.68*pi/180;  17*pi/180; jvar_l(2,1); jvar_l(3,1); jvar_l(4,1)];
 gamma = [gamma_t,gamma_i,gamma_m,gamma_r,gamma_l];
+q_ini = gamma(3:5,:);
 
 %%
 %该段用于计算全局坐标系到五指指根坐标系的齐次变换。
@@ -61,6 +64,7 @@ theta_p6 = linspace(-pi/2,45.5*pi/180,105);%135.5°
 [T1,T2,T6] = ndgrid(theta_p1,theta_p2,theta_p6);
 theta_p = [T1(:)'; T2(:)'; T6(:)'];
 
+%注意，以下变量中带有"_ini"后缀的都是表示变胞手处于initial的初始位置。
 %建立手掌旋量系
 [Sl1,~,Sl2,~,S14,S23] = yield_palm_screws();
 %建立约束方程，求解手掌运动学(得到手掌6个关节变量)
@@ -86,15 +90,15 @@ Sf_ini = calculate_initial_finger_screws(L, gamma, Sf);
 %指尖坐标系初始位姿数值解
 g0_tip = yield_initial_finger_tip_coordinates(L, gamma, r3_f);
 %全局坐标系至各手指指尖坐标系的齐次变换矩阵。其中H_t = H_p * H_tb。
-[H_t_num,H_tb_num] = calculate_finger_tip_H(Sf_ini, H_p_num, jvar_f);
-[H_t_num_ini, H_tb_num_ini] = calculate_finger_tip_H(Sf_ini, H_p_num_ini, jvar_f);
+[H_t_num,H_tb_num] = calculate_finger_tip_H(Sf_ini, H_p_num, jvar_f,q_ini);
+[H_t_num_ini, H_tb_num_ini] = calculate_finger_tip_H(Sf_ini, H_p_num_ini, jvar_f,q_ini);
 
 %
 %该段用于计算指根坐标系位姿
 g_base_num = calculate_fingerbase_poses(H_p_num, g0_base);
 %该段用于计算指尖坐标系位姿
-g_tip_num = calculate_fingertip_poses(H_t_num, g0_tip);
-g_tip_num_ini = calculate_fingertip_poses(H_t_num_ini, g0_tip);
+g_tip_num = calculate_finger_tip_poses(H_t_num, g0_tip);
+g_tip_num_ini = calculate_finger_tip_poses(H_t_num_ini, g0_tip);
 %该段用于计算指尖坐标系位姿(相对于各自基坐标系)
 g_tip_base = calculate_tip_wrt_base(g_tip_num_ini, g0_base);
 
@@ -105,7 +109,7 @@ WS_fold2 = plot_hand_workspace_foldpalm_test(g_tip_num, 5000);
 
 %%
 %对手指驱动关节变量进行重新采样，绘制手掌不发生翻折情况下的变胞手工作空间
-g_tip_num_dense = resample_g_tip_num_dense(Sf_ini, H_p_num_ini, g0_tip);
+g_tip_num_dense = resample_g_tip_num_dense(Sf_ini, H_p_num_ini, g0_tip, q_ini);
 WS_unfold = plot_hand_workspace_inipalm(g_tip_num_dense,400);
 % 利用逆矩阵映射回局部指根坐标系
 g_tip_base_dense = calculate_tip_wrt_base(g_tip_num_dense, g0_base); 

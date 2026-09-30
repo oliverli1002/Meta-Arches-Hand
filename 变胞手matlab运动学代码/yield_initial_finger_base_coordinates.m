@@ -2,6 +2,7 @@ function g0_num = yield_initial_finger_base_coordinates(L,gamma,t1_num,t2_num)
 %该函数用于生成手掌处于平面状态下（初始位置）手掌上的指根坐标系位姿。
 
 syms l [1 5] positive;
+syms d [1 5] positive;
 syms bet [1 5] real;
 syms gam [1 5] real;
 syms t1 t2;
@@ -9,11 +10,11 @@ z = [0;0;1];%全局坐标系z轴
 y = [0;1;0];%全局坐标系y轴
 
 %五指基坐标系的位置
-p0_t=[l1*sin(bet1-pi/2);l1*cos(bet1-pi/2);t2];
-p0_i=[-l2*cos(bet2);l2*sin(bet2);t1];
-p0_m=[-l3*cos(bet3);l3*sin(bet3);t1];
-p0_r=[-l4*cos(bet4);-l4*sin(bet4);t1];
-p0_l=[-l5*cos(bet5);-l5*sin(bet5);t1];
+p0_t=[l1*sin(bet1-pi/2);l1*cos(bet1-pi/2);0];
+p0_i=[-l2*cos(bet2)-d2*cos(gam2);l2*sin(bet2)+d2*sin(gam2);0];
+p0_m=[-l3*cos(bet3)-d3*cos(gam3);l3*sin(bet3)+d3*sin(gam3);0];
+p0_r=[-l4*cos(bet4)-d4*cos(gam4);-l4*sin(bet4)-d4*sin(gam4);0];
+p0_l=[-l5*cos(bet5)-d5*cos(gam5);-l5*sin(bet5)-d5*sin(gam5);0];
 %五指基坐标系的姿态
 R0_t =  yield_R(z,(pi/2-gam1))*yield_R(y,-pi/2);%从右向左，在全局坐标系下
 R0_i =  yield_R(z,(pi/2-gam2));
@@ -33,6 +34,6 @@ for i = 1:5
 end
 
 %代入参数求数值解
-f = matlabFunction(g0, 'Vars', {l, bet, gam, t1, t2});
-g0_num = f(L(1,:), gamma(1,:), gamma(2,:), t1_num, t2_num);
+f = matlabFunction(g0, 'Vars', {l, d, bet, gam, t1, t2});
+g0_num = f(L(1,:), L(2,:), gamma(1,:), gamma(2,:), t1_num, t2_num);
 end

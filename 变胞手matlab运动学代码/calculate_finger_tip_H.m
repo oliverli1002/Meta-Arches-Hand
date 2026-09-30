@@ -1,4 +1,4 @@
-function [H_tip_num, H_tb_cache] = calculate_finger_tip_H(Sf, H_palm, jvar_f)
+function [H_tip_num, H_tb_cache] = calculate_finger_tip_H(Sf, H_palm, jvar_f, q_ini)
 % 输出 H_tip_num: 5×1 cell
 %   - H_tip_num{i}: 4×4×Nc_i×Np (每根手指完全根据自己的采样点数 Nc_i 独立生成位姿)
 % 输出 H_tb_cache: 5×1 cell
@@ -8,7 +8,8 @@ function [H_tip_num, H_tb_cache] = calculate_finger_tip_H(Sf, H_palm, jvar_f)
 %   Sf     : 6×3×5 double (初始旋量系)
 %   H_palm : 4×4×5×Np double (手掌变胞位姿)
 %   jvar_f : 5×1 cell (五指各自的关节变量全集)
-    
+%     q_ini: 3×5，每列是该手指在 Sf 和 g0_tip 所用构型下的关节角
+
     % 1. 输入维度基础校验
     assert(isnumeric(Sf) && isequal(size(Sf), [6,3,5]), 'Sf 必须是 6×3×5');
     
@@ -29,8 +30,8 @@ function [H_tip_num, H_tb_cache] = calculate_finger_tip_H(Sf, H_palm, jvar_f)
         % 动态获取当前手指的配置总数 Nc_i (例如拇指是 400，食指是 20)
         Nc_i = size(jvar_f{i}, 2);
         
-        % 提取当前手指的关节角数据 (提取第 2~4 行)
-        q = double(jvar_f{i}(2:4, :)); % 维度为 3 x Nc_i
+        % 提取当前构型下相较于初始构型的手指关节角变量
+        q = double(jvar_f{i}(2:4, :)-q_ini(:, i)); % 维度为 3 x Nc_i
         
         % --- 预计算局部变换矩阵 Htb (4 x 4 x Nc_i) ---
         Htb = zeros(4, 4, Nc_i);

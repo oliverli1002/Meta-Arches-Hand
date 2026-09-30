@@ -25,13 +25,13 @@ R0 = sym(zeros(3,3,5));
 
 % -------- 拇指：保持你原来的特殊角度关系 --------
 % 指尖位置
-tip_ang_t = the(2,1) - (gam(1) - the(1,1));  % = the2 - gam + the1
+tip_ang_t = the(3,1) - (gam(1) - the(2,1));  % = the3 - gam + the2
 p0(:,:,1) = [ -l(5,1)*cos(tip_ang_t) + r3(1,1);
     -l(5,1)*sin(tip_ang_t) + r3(2,1);
     r3(3,1) ];
 
 % 基坐标系姿态
-R0(:,:,1) = yield_R(z, pi/2 - gam(1) + the(1,1) + the(2,1)) * yield_R(y, -pi/2);
+R0(:,:,1) = yield_R(z, pi/2 - gam(1) + the(2,1) + the(3,1)) * yield_R(y, -pi/2);
 
 % -------- 其余四指（2~5）：共用模板，用 y 符号区分 --------
 % 食/中：y 为正；无/小：y 为负
