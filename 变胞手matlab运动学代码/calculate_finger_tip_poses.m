@@ -1,4 +1,4 @@
-function g_tip = calculate_fingertip_poses(H_t_num, g0_tip)
+function g_tip = calculate_finger_tip_poses(H_t_num, g0_tip)
 % CALCULATE_FINGERTIP_POSES 计算指尖坐标系位姿
 % 根据 POE 理论执行 g_tip = H_t_num * g0_tip
 %

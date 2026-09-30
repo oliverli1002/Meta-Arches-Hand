@@ -30,8 +30,8 @@ function [S, r3_all] = yield_finger_screws()
     St2 = [st2; cross(rt2, st2)];
 
     st3 = st2;
-    rt3 = [-l(4,1)*cos(gam(1)-the(1,1)) - l(3,1)*cos(gam(1)) + l(2,1)*sin(gam(1)) - l(1,1)*cos(bet(1));
-            l(4,1)*sin(gam(1)-the(1,1)) + l(3,1)*sin(gam(1)) + l(2,1)*cos(gam(1)) + l(1,1)*sin(bet(1));
+    rt3 = [-l(4,1)*cos(gam(1)-the(2,1)) - l(3,1)*cos(gam(1)) + l(2,1)*sin(gam(1)) - l(1,1)*cos(bet(1));
+            l(4,1)*sin(gam(1)-the(2,1)) + l(3,1)*sin(gam(1)) + l(2,1)*cos(gam(1)) + l(1,1)*sin(bet(1));
             0];
     St3 = [st3; cross(rt3, st3)];
 
